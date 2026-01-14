@@ -1,0 +1,9 @@
+# sample.csv
+fr,en,example,tags
+Bonjour,Hello,"Bonjour, comment ça va ?",daily,greetings
+Merci,Thank you,"Merci pour votre aide.",daily,polite
+Je voudrais,I would like,"Je voudrais un café, s'il vous plaît.",food,ordering
+Où est...?,Where is...?, "Où est la station de métro ?",travel,asking
+Combien ça coûte ?,How much is it?,"Combien ça coûte ?",shopping,daily
+Rendez-vous,Appointment,"J'ai un rendez-vous à 15h.",work,admin
+Facture,Invoice,"Pouvez-vous m'envoyer la facture ?",work,finance
