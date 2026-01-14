@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -20,17 +19,48 @@
     </div>
 
     <div class="top-actions">
-      <button id="toggleTheme" class="btn ghost" type="button" aria-label="Toggle theme">
-        Theme
-      </button>
-      <button id="openHelp" class="btn ghost" type="button">
-        Format
-      </button>
-      <a class="btn ghost" href="sample.csv" download>Sample CSV</a>
+      <button id="toggleTheme" class="btn ghost" type="button" aria-label="Toggle theme">Theme</button>
+      <button id="openHelp" class="btn ghost" type="button">Format</button>
     </div>
   </header>
 
   <main class="wrap">
+    <section class="card-area">
+      <div class="card" id="card" role="button" tabindex="0" aria-label="Flashcard">
+        <div class="card-top">
+          <div class="pill" id="pill">Deck</div>
+          <div class="pill subtle" id="indexPill">0 / 0</div>
+        </div>
+
+        <div class="card-body">
+          <div class="front" id="frontText">Import a CSV to start.</div>
+
+          <div class="back hidden" id="backBox">
+            <div class="back-title" id="backTitle"></div>
+            <div class="back-example" id="backExample"></div>
+            <div class="back-tags" id="backTags"></div>
+          </div>
+        </div>
+
+        <div class="card-bottom">
+          <button id="speak" class="btn small" type="button">Speak</button>
+          <button id="flip" class="btn small ghost" type="button">Flip</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button id="prev" class="btn ghost" type="button">Prev</button>
+        <button id="again" class="btn" type="button">Again</button>
+        <button id="good" class="btn" type="button">Good</button>
+        <button id="easy" class="btn" type="button">Easy</button>
+        <button id="next" class="btn ghost" type="button">Next</button>
+      </div>
+
+      <div class="shortcuts">
+        Keys. Space flip. Left or right navigate. 1 again. 2 good. 3 easy. S speak.
+      </div>
+    </section>
+
     <section class="panel">
       <div class="panel-row">
         <div class="panel-col">
@@ -48,7 +78,7 @@
           <label class="label" for="ttsVoice">Audio voice</label>
           <select id="ttsVoice" class="select"></select>
           <div class="hint">
-            Audio uses your device speech engine. Works on iPhone and laptop.
+            Audio uses your device speech engine.
           </div>
         </div>
       </div>
@@ -76,50 +106,17 @@
           <label class="label" for="tagFilter">Tag filter</label>
           <input id="tagFilter" class="input" placeholder="e.g. travel, work, food" />
           <div class="hint">
-            Matches tags column, comma-separated.
+            Matches tags column.
           </div>
         </div>
       </div>
 
       <div class="panel-row">
-        <div class="stats" id="stats">
-          No deck loaded.
-        </div>
+        <div class="stats" id="stats">No deck loaded.</div>
         <div class="panel-actions">
           <button id="resetProgress" class="btn ghost" type="button">Reset progress</button>
           <button id="exportProgress" class="btn ghost" type="button">Export progress</button>
         </div>
-      </div>
-    </section>
-
-    <section class="card-area">
-      <div class="card" id="card" role="button" tabindex="0" aria-label="Flashcard">
-        <div class="card-top">
-          <div class="pill" id="pill">Deck</div>
-          <div class="pill subtle" id="indexPill">0 / 0</div>
-        </div>
-
-        <div class="card-body">
-          <div class="front" id="frontText">Import a CSV to start.</div>
-          <div class="back hidden" id="backText"></div>
-        </div>
-
-        <div class="card-bottom">
-          <button id="speak" class="btn small" type="button">Speak</button>
-          <button id="flip" class="btn small ghost" type="button">Flip</button>
-        </div>
-      </div>
-
-      <div class="nav">
-        <button id="prev" class="btn ghost" type="button">Prev</button>
-        <button id="again" class="btn" type="button">Again</button>
-        <button id="good" class="btn" type="button">Good</button>
-        <button id="easy" class="btn" type="button">Easy</button>
-        <button id="next" class="btn ghost" type="button">Next</button>
-      </div>
-
-      <div class="shortcuts">
-        Keys. Space flip. Left or right navigate. 1 again. 2 good. 3 easy. S speak.
       </div>
     </section>
   </main>
@@ -131,14 +128,11 @@
     </div>
 
     <div class="dialog-body">
-      <div class="mono">
-        fr,en,example,tags
-        Bonjour,Hello,"Bonjour, comment ça va ?",daily,greetings
-      </div>
+      <div class="mono">fr,en,example,tags
+Bonjour,Hello,"Bonjour, comment ça va ?",daily,greetings</div>
       <ul class="list">
         <li>Required columns: fr, en</li>
         <li>Optional: example, tags</li>
-        <li>Tags are comma-separated</li>
         <li>Use quotes around text with commas</li>
       </ul>
     </div>
