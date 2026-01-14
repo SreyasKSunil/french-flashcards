@@ -1,4 +1,3 @@
-// app.js
 (function () {
   const $ = (id) => document.getElementById(id);
 
@@ -12,27 +11,35 @@
     preferExample: $("preferExample"),
     tagFilter: $("tagFilter"),
     stats: $("stats"),
+
     card: $("card"),
     frontText: $("frontText"),
-    backText: $("backText"),
+    backBox: $("backBox"),
+    backTitle: $("backTitle"),
+    backExample: $("backExample"),
+    backTags: $("backTags"),
     flip: $("flip"),
     speak: $("speak"),
+
     prev: $("prev"),
     next: $("next"),
     again: $("again"),
     good: $("good"),
     easy: $("easy"),
+
     pill: $("pill"),
     indexPill: $("indexPill"),
+
     resetProgress: $("resetProgress"),
     exportProgress: $("exportProgress"),
+
     help: $("help"),
     openHelp: $("openHelp"),
     closeHelp: $("closeHelp"),
   };
 
-  const STORAGE_KEY = "fr_flashcards_v1";
-  const THEME_KEY = "fr_flashcards_theme_v1";
+  const STORAGE_KEY = "fr_flashcards_v2_progress";
+  const THEME_KEY = "fr_flashcards_v2_theme";
 
   let deckRaw = [];
   let deck = [];
@@ -48,8 +55,7 @@
   initTheme();
   initEvents();
   initTTS();
-
-  renderEmpty();
+  renderEmpty("Import a CSV to start.");
 
   function initTheme() {
     const saved = localStorage.getItem(THEME_KEY);
@@ -74,7 +80,8 @@
       const file = e.target.files && e.target.files[0];
       if (!file) return;
       const text = await file.text();
-      loadFromCSV(text, file.name);
+      loadFromCSV(text, file.name || "deck.csv");
+      els.csvFile.value = "";
     });
 
     els.loadSample.addEventListener("click", async () => {
@@ -83,7 +90,16 @@
       loadFromCSV(text, "sample.csv");
     });
 
-    els.flip.addEventListener("click", () => flipCard());
+    els.flip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      flipCard();
+    });
+
+    els.speak.addEventListener("click", (e) => {
+      e.stopPropagation();
+      speakFromVisibleSide();
+    });
+
     els.card.addEventListener("click", () => flipCard());
     els.card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -92,8 +108,6 @@
       }
     });
 
-    els.speak.addEventListener("click", () => speakCurrent());
-
     els.prev.addEventListener("click", () => move(-1));
     els.next.addEventListener("click", () => move(1));
 
@@ -101,13 +115,13 @@
     els.good.addEventListener("click", () => rate("good"));
     els.easy.addEventListener("click", () => rate("easy"));
 
-    els.shuffle.addEventListener("change", () => rebuildView());
-    els.preferExample.addEventListener("change", () => rebuildView());
-    els.tagFilter.addEventListener("input", debounce(() => rebuildView(), 220));
+    els.shuffle.addEventListener("change", () => rebuildView(true));
+    els.preferExample.addEventListener("change", () => rebuildView(true));
+    els.tagFilter.addEventListener("input", debounce(() => rebuildView(true), 220));
 
     els.resetProgress.addEventListener("click", () => {
       if (!confirm("Reset progress for all cards?")) return;
-      for (const k of Object.keys(progress.ratings)) delete progress.ratings[k];
+      progress.ratings = {};
       saveProgress();
       updateStats();
     });
@@ -127,14 +141,16 @@
 
       if (e.key === "ArrowLeft") move(-1);
       if (e.key === "ArrowRight") move(1);
+
       if (e.key === " ") {
         e.preventDefault();
         flipCard();
       }
+
       if (e.key === "1") rate("again");
       if (e.key === "2") rate("good");
       if (e.key === "3") rate("easy");
-      if (e.key.toLowerCase() === "s") speakCurrent();
+      if (e.key.toLowerCase() === "s") speakFromVisibleSide();
     });
 
     els.ttsVoice.addEventListener("change", () => {
@@ -146,7 +162,7 @@
 
   function initTTS() {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
-      els.ttsVoice.innerHTML = `<option value="">Speech not supported on this device</option>`;
+      els.ttsVoice.innerHTML = `<option value="">Speech not supported</option>`;
       els.ttsVoice.disabled = true;
       return;
     }
@@ -154,12 +170,11 @@
     const loadVoices = () => {
       voices = window.speechSynthesis.getVoices() || [];
       const frVoices = voices.filter(v => (v.lang || "").toLowerCase().startsWith("fr"));
-
       const list = frVoices.length ? frVoices : voices;
+
       els.ttsVoice.innerHTML = list.map(v => {
         const label = `${v.name} (${v.lang})`;
-        const safe = escapeHtml(label);
-        return `<option value="${escapeHtml(v.voiceURI)}">${safe}</option>`;
+        return `<option value="${escapeHtml(v.voiceURI)}">${escapeHtml(label)}</option>`;
       }).join("");
 
       selectedVoiceURI = progress.voiceURI || (frVoices[0]?.voiceURI || list[0]?.voiceURI || "");
@@ -173,12 +188,13 @@
   }
 
   function speak(text) {
-    if (!text) return;
+    const t = (text || "").trim();
+    if (!t) return;
     if (!("speechSynthesis" in window)) return;
 
     window.speechSynthesis.cancel();
 
-    const u = new SpeechSynthesisUtterance(text);
+    const u = new SpeechSynthesisUtterance(t);
     const v = voices.find(v => v.voiceURI === selectedVoiceURI);
     if (v) u.voice = v;
 
@@ -189,12 +205,29 @@
     window.speechSynthesis.speak(u);
   }
 
-  function speakCurrent() {
-    const c = deck[idx];
+  function speakFromVisibleSide() {
+    const c = currentCard();
     if (!c) return;
-    const front = getFrontText(c);
-    const fr = c.fr || front;
-    speak(fr);
+
+    if (!showingBack) {
+      speak(getFrontText(c));
+      return;
+    }
+
+    const preferExampleFront = !!els.preferExample.checked;
+    const preferExampleBack = !preferExampleFront;
+
+    if (preferExampleBack && c.example) {
+      speak(c.example);
+      return;
+    }
+
+    if (c.example) {
+      speak(c.example);
+      return;
+    }
+
+    speak(c.fr);
   }
 
   function loadFromCSV(text, name) {
@@ -207,12 +240,10 @@
     const header = rows[0].map(h => (h || "").trim().toLowerCase());
     const dataRows = rows.slice(1).filter(r => r.some(x => String(x || "").trim().length));
 
-    const col = (key) => header.indexOf(key);
-
-    const iFR = col("fr");
-    const iEN = col("en");
-    const iEX = col("example");
-    const iTAGS = col("tags");
+    const iFR = header.indexOf("fr");
+    const iEN = header.indexOf("en");
+    const iEX = header.indexOf("example");
+    const iTAGS = header.indexOf("tags");
 
     if (iFR < 0 || iEN < 0) {
       renderEmpty("CSV needs headers: fr,en (example,tags optional).");
@@ -224,7 +255,6 @@
       const en = (r[iEN] || "").trim();
       const example = iEX >= 0 ? (r[iEX] || "").trim() : "";
       const tags = iTAGS >= 0 ? (r[iTAGS] || "").trim() : "";
-
       const id = stableId(fr, en, example, tags, n);
       return { id, fr, en, example, tags };
     }).filter(x => x.fr && x.en);
@@ -234,18 +264,19 @@
     idx = 0;
     showingBack = false;
 
-    rebuildView();
+    rebuildView(true);
   }
 
-  function rebuildView() {
+  function rebuildView(resetIndex) {
     const tagNeedle = (els.tagFilter.value || "").trim().toLowerCase();
     const preferExample = !!els.preferExample.checked;
 
-    deck = deckRaw.filter(c => {
-      if (!tagNeedle) return true;
-      const tags = (c.tags || "").toLowerCase();
-      return tags.includes(tagNeedle);
-    }).map(c => ({ ...c, _preferExample: preferExample }));
+    deck = deckRaw
+      .filter(c => {
+        if (!tagNeedle) return true;
+        return (c.tags || "").toLowerCase().includes(tagNeedle);
+      })
+      .map(c => ({ ...c, _preferExample: preferExample }));
 
     order = deck.map((_, i) => i);
 
@@ -256,42 +287,27 @@
       return;
     }
 
-    idx = 0;
+    if (resetIndex) idx = 0;
+    if (idx >= order.length) idx = 0;
+
     showingBack = false;
     renderCard();
 
-    if (els.autoSpeak.checked) speakCurrent();
-
+    if (els.autoSpeak.checked) speakFromVisibleSide();
     updateStats();
   }
 
   function renderEmpty(msg) {
     els.frontText.textContent = msg || "Import a CSV to start.";
-    els.backText.textContent = "";
-    els.backText.classList.add("hidden");
+    els.backBox.classList.add("hidden");
     els.indexPill.textContent = "0 / 0";
     updateStats();
   }
 
-  function renderCard() {
+  function currentCard() {
+    if (!deck.length) return null;
     const i = order[idx];
-    const c = deck[i];
-    if (!c) return renderEmpty("No cards available.");
-
-    const front = getFrontText(c);
-    const back = getBackText(c);
-
-    els.frontText.textContent = front;
-    els.backText.textContent = back;
-
-    if (showingBack) {
-      els.backText.classList.remove("hidden");
-    } else {
-      els.backText.classList.add("hidden");
-    }
-
-    els.indexPill.textContent = `${idx + 1} / ${order.length}`;
-    updateStats();
+    return deck[i] || null;
   }
 
   function getFrontText(c) {
@@ -299,20 +315,27 @@
     return c.fr;
   }
 
-  function getBackText(c) {
-    const lines = [];
-    lines.push(c.en);
-    if (c._preferExample && c.example) lines.push("");
-    if (c.example && !(c._preferExample)) lines.push(c.example);
-    if (c.tags) lines.push(`Tags: ${c.tags}`);
-    return lines.join("\n");
+  function renderCard() {
+    const c = currentCard();
+    if (!c) return renderEmpty("No cards available.");
+
+    els.frontText.textContent = getFrontText(c);
+
+    els.backTitle.textContent = c.en || "";
+    els.backExample.textContent = c.example ? `Example: ${c.example}` : "";
+    els.backTags.textContent = c.tags ? `Tags: ${c.tags}` : "";
+
+    if (showingBack) els.backBox.classList.remove("hidden");
+    else els.backBox.classList.add("hidden");
+
+    els.indexPill.textContent = `${idx + 1} / ${order.length}`;
+    updateStats();
   }
 
   function flipCard() {
     if (!deck.length) return;
     showingBack = !showingBack;
     renderCard();
-    if (!showingBack && els.autoSpeak.checked) speakCurrent();
   }
 
   function move(dir) {
@@ -320,53 +343,42 @@
     idx = (idx + dir + order.length) % order.length;
     showingBack = false;
     renderCard();
-    if (els.autoSpeak.checked) speakCurrent();
+    if (els.autoSpeak.checked) speakFromVisibleSide();
   }
 
   function rate(level) {
-    if (!deck.length) return;
-    const i = order[idx];
-    const c = deck[i];
+    const c = currentCard();
     if (!c) return;
 
-    progress.ratings[c.id] = {
-      level,
-      at: new Date().toISOString()
-    };
+    progress.ratings[c.id] = { level, at: new Date().toISOString() };
     saveProgress();
 
-    const step = level === "again" ? 1 : (level === "good" ? 1 : 1);
-    idx = (idx + step) % order.length;
+    idx = (idx + 1) % order.length;
     showingBack = false;
     renderCard();
 
-    if (els.autoSpeak.checked) speakCurrent();
+    if (els.autoSpeak.checked) speakFromVisibleSide();
   }
 
   function updateStats() {
     const total = deckRaw.length || 0;
-
-    const rated = Object.keys(progress.ratings).length;
-    const again = countRatings("again");
-    const good = countRatings("good");
-    const easy = countRatings("easy");
-
     if (!total) {
       els.stats.textContent = "No deck loaded.";
       return;
     }
 
     const filtered = deck.length || 0;
-    els.stats.textContent =
-      `Cards: ${filtered}/${total}. Rated: ${rated}. Again: ${again}. Good: ${good}. Easy: ${easy}.`;
-  }
 
-  function countRatings(level) {
-    let n = 0;
-    for (const k of Object.keys(progress.ratings)) {
-      if (progress.ratings[k]?.level === level) n += 1;
+    let rated = 0, again = 0, good = 0, easy = 0;
+    for (const k of Object.keys(progress.ratings || {})) {
+      rated += 1;
+      const lvl = progress.ratings[k]?.level;
+      if (lvl === "again") again += 1;
+      if (lvl === "good") good += 1;
+      if (lvl === "easy") easy += 1;
     }
-    return n;
+
+    els.stats.textContent = `Cards: ${filtered}/${total}. Rated: ${rated}. Again: ${again}. Good: ${good}. Easy: ${easy}.`;
   }
 
   function loadProgress() {
