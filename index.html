@@ -4,150 +4,94 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>French Flashcards</title>
-
   <style>
-    :root {
-      --bg1: #0f2027;
-      --bg2: #203a43;
-      --bg3: #2c5364;
-
-      --card-bg: rgba(255, 255, 255, 0.12);
-      --panel-bg: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.22);
-      --text-main: #f2f4f7;
-      --text-muted: rgba(242, 244, 247, 0.7);
-      --accent: #8fd3f4;
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --panel: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.22);
+      --text:#f2f4f7;
+      --muted: rgba(242,244,247,0.72);
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 18px;
-      min-height: 100vh;
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; padding:18px; min-height:100vh;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
-      color: var(--text-main);
+      background: linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      color:var(--text);
     }
-
-    h1 {
-      font-size: 20px;
-      margin: 0 0 14px 0;
-      font-weight: 600;
-    }
-
-    .pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--panel-bg);
-      font-size: 13px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .two {
-      display: grid;
-      gap: 14px;
-    }
-
-    @media (min-width: 860px) {
-      .two {
-        grid-template-columns: 1.2fr 0.8fr;
-      }
-    }
-
-    .panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
+    h1{ font-size:20px; margin:0 0 14px 0; font-weight:600; }
+    .two{ display:grid; gap:14px; }
+    @media(min-width:860px){ .two{ grid-template-columns:1.2fr 0.8fr; } }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{
+      padding:6px 12px; border-radius:999px;
+      border:1px solid var(--border); background:var(--panel);
+      font-size:13px;
       backdrop-filter: blur(10px);
     }
-
-    .card {
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      backdrop-filter: blur(10px);
+    }
+    .card{
       background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      min-height: 200px;
-      display: grid;
-      gap: 12px;
-      cursor: pointer;
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:20px;
+      min-height:210px;
+      display:grid;
+      gap:12px;
+      cursor:pointer;
       backdrop-filter: blur(14px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     }
-
-    .muted {
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-
-    .big {
-      font-size: 28px;
-      font-weight: 650;
-    }
-
-    .mid {
-      font-size: 16px;
-    }
-
-    button, input[type="file"] {
-      padding: 10px 14px;
-      font-size: 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
+    .muted{ color:var(--muted); font-size:13px; }
+    .big{ font-size:28px; font-weight:650; }
+    .mid{ font-size:16px; }
+    button, input[type="file"]{
+      padding:10px 14px;
+      font-size:14px;
+      border-radius:14px;
+      border:1px solid var(--border);
       background: rgba(255,255,255,0.06);
-      color: var(--text-main);
-      cursor: pointer;
+      color:var(--text);
     }
-
-    button.primary {
+    button{ cursor:pointer; }
+    button.primary{
       background: linear-gradient(135deg, #6fb1fc, #4364f7);
-      border: none;
-      color: #ffffff;
-      font-weight: 600;
+      border:none; color:#fff; font-weight:600;
     }
-
-    .rate {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 120px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 10px;
+    .rate{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    textarea{
+      width:100%; min-height:120px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      padding:10px;
       background: rgba(255,255,255,0.05);
-      color: var(--text-main);
+      color:var(--text);
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
+      font-size:12px;
     }
-
-    textarea::placeholder {
-      color: var(--text-muted);
+    textarea::placeholder{ color:var(--muted); }
+    .drop{
+      border:2px dashed rgba(255,255,255,0.35);
+      border-radius:16px;
+      padding:14px;
+      text-align:center;
+      background: rgba(255,255,255,0.04);
     }
-
-    .ok {
-      color: #7ee2a8;
+    .drop.active{
+      border-color: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.08);
     }
-
-    .warn {
-      color: #ffb4b4;
-    }
+    .ok{ color:#7ee2a8; }
+    .warn{ color:#ffb4b4; }
   </style>
 </head>
-
 <body>
   <h1>French Flashcards. Professional and Conversational</h1>
 
@@ -161,7 +105,7 @@
 
       <div style="height:14px"></div>
 
-      <div class="card" id="card">
+      <div class="card" id="card" title="Tap to flip">
         <div class="muted" id="cardTop">Import a CSV to start</div>
         <div class="big" id="frontText">No cards loaded</div>
         <div class="mid" id="backText" style="display:none"></div>
@@ -169,26 +113,26 @@
         <div class="muted" id="notesText" style="display:none"></div>
 
         <div class="row">
-          <button id="speakBtn">Audio FR</button>
-          <button id="nextBtn" class="primary">Next</button>
+          <button id="speakBtn" type="button">Audio FR</button>
+          <button id="nextBtn" type="button" class="primary">Next</button>
         </div>
       </div>
 
       <div style="height:14px"></div>
 
       <div class="panel rate">
-        <button id="againBtn">Again</button>
-        <button id="hardBtn">Hard</button>
-        <button id="goodBtn">Good</button>
-        <button id="easyBtn">Easy</button>
+        <button id="againBtn" type="button">Again</button>
+        <button id="hardBtn" type="button">Hard</button>
+        <button id="goodBtn" type="button">Good</button>
+        <button id="easyBtn" type="button">Easy</button>
       </div>
 
       <div style="height:14px"></div>
 
       <div class="panel">
         <div class="row">
-          <button id="exportBtn">Export CSV</button>
-          <button id="resetBtn">Reset data</button>
+          <button id="exportBtn" type="button">Export CSV</button>
+          <button id="resetBtn" type="button">Reset data</button>
         </div>
         <div class="muted" id="status"></div>
       </div>
@@ -198,19 +142,25 @@
       <div class="panel">
         <div class="row">
           <input id="fileInput" type="file" accept=".csv,.txt,.xml">
-          <button id="importBtn" class="primary">Import</button>
+          <button id="importBtn" type="button" class="primary">Import</button>
         </div>
         <div class="muted">CSV headers: front, back, example, notes</div>
       </div>
 
       <div style="height:14px"></div>
 
+      <div class="panel drop" id="dropZone">
+        Drop CSV here on laptop. On iPhone, use paste import below.
+      </div>
+
+      <div style="height:14px"></div>
+
       <div class="panel">
         <div class="row">
-          <button id="pasteLoadBtn">Load pasted CSV</button>
-          <button id="pasteClearBtn">Clear</button>
+          <button id="pasteLoadBtn" type="button">Load pasted CSV</button>
+          <button id="pasteClearBtn" type="button">Clear</button>
         </div>
-        <textarea id="pasteBox" placeholder="Paste CSV here"></textarea>
+        <textarea id="pasteBox" placeholder="Paste CSV here, including the header row"></textarea>
       </div>
 
       <div style="height:14px"></div>
@@ -224,9 +174,375 @@
   </div>
 
 <script>
-/* JavaScript logic is unchanged from the previous version.
-   Paste the same script section here without the starter A2 logic.
-   Nothing else needs to change for visuals. */
+  const storageKey = "ff_deck_v1"
+  const storageStatsKey = "ff_stats_v1"
+  const byId = id => document.getElementById(id)
+
+  const ui = {
+    deckInfo: byId("deckInfo"),
+    dueInfo: byId("dueInfo"),
+    streakInfo: byId("streakInfo"),
+    card: byId("card"),
+    cardTop: byId("cardTop"),
+    frontText: byId("frontText"),
+    backText: byId("backText"),
+    exampleText: byId("exampleText"),
+    notesText: byId("notesText"),
+    status: byId("status"),
+    fileInput: byId("fileInput"),
+    dropZone: byId("dropZone"),
+    pasteBox: byId("pasteBox"),
+    audioWarn: byId("audioWarn"),
+    audioOk: byId("audioOk")
+  }
+
+  const state = { deck: [], current: null, showBack: false, lastPickId: null }
+
+  const nowTs = () => Date.now()
+  const clamp = (n,a,b) => Math.max(a, Math.min(b,n))
+
+  const todayKey = () => {
+    const d = new Date()
+    const y = d.getFullYear()
+    const m = String(d.getMonth()+1).padStart(2,"0")
+    const day = String(d.getDate()).padStart(2,"0")
+    return `${y}-${m}-${day}`
+  }
+
+  const loadStats = () => {
+    const raw = localStorage.getItem(storageStatsKey)
+    if (!raw) return { day: todayKey(), reviews: 0 }
+    try {
+      const s = JSON.parse(raw)
+      if (s.day !== todayKey()) return { day: todayKey(), reviews: 0 }
+      return s
+    } catch { return { day: todayKey(), reviews: 0 } }
+  }
+
+  const saveStats = s => localStorage.setItem(storageStatsKey, JSON.stringify(s))
+
+  const normalizeCard = (c, idx) => ({
+    id: c.id || `c_${nowTs()}_${idx}_${Math.random().toString(16).slice(2)}`,
+    front: (c.front || "").trim(),
+    back: (c.back || "").trim(),
+    example: (c.example || "").trim(),
+    notes: (c.notes || "").trim(),
+    createdAt: c.createdAt || nowTs(),
+    updatedAt: nowTs(),
+    dueAt: c.dueAt || nowTs(),
+    intervalDays: typeof c.intervalDays === "number" ? c.intervalDays : 0,
+    ease: typeof c.ease === "number" ? c.ease : 2.3,
+    reps: typeof c.reps === "number" ? c.reps : 0,
+    lapses: typeof c.lapses === "number" ? c.lapses : 0
+  })
+
+  const saveDeck = () => localStorage.setItem(storageKey, JSON.stringify(state.deck))
+  const loadDeck = () => {
+    const raw = localStorage.getItem(storageKey)
+    if (!raw) return []
+    try {
+      const arr = JSON.parse(raw)
+      if (!Array.isArray(arr)) return []
+      return arr.map(normalizeCard)
+    } catch { return [] }
+  }
+
+  const dueCount = () => state.deck.filter(c => c.dueAt <= nowTs()).length
+
+  const refreshBadges = () => {
+    ui.deckInfo.textContent = `Deck: ${state.deck.length}`
+    ui.dueInfo.textContent = `Due: ${dueCount()}`
+    const stats = loadStats()
+    ui.streakInfo.textContent = `Today: ${stats.reviews}`
+  }
+
+  const renderCard = () => {
+    refreshBadges()
+    if (!state.current) {
+      ui.cardTop.textContent = "Import a CSV to start"
+      ui.frontText.textContent = "No cards loaded"
+      ui.backText.style.display = "none"
+      ui.exampleText.style.display = "none"
+      ui.notesText.style.display = "none"
+      return
+    }
+    ui.cardTop.textContent = `Due ${new Date(state.current.dueAt).toLocaleString()}  Ease ${state.current.ease.toFixed(2)}  Interval ${state.current.intervalDays.toFixed(2)}d`
+    ui.frontText.textContent = state.current.front || "(empty)"
+    ui.backText.textContent = state.current.back || "(empty)"
+    ui.exampleText.textContent = state.current.example ? `Example: ${state.current.example}` : ""
+    ui.notesText.textContent = state.current.notes ? `Notes: ${state.current.notes}` : ""
+
+    ui.backText.style.display = state.showBack ? "block" : "none"
+    ui.exampleText.style.display = state.showBack && state.current.example ? "block" : "none"
+    ui.notesText.style.display = state.showBack && state.current.notes ? "block" : "none"
+  }
+
+  const pickNext = () => {
+    if (!state.deck.length) { state.current = null; state.showBack = false; renderCard(); return }
+    const due = state.deck.filter(c => c.dueAt <= nowTs())
+    const pool = due.length ? due : state.deck
+    let pick = pool[Math.floor(Math.random() * pool.length)]
+    if (pool.length > 1 && state.lastPickId) {
+      let guard = 0
+      while (pick.id === state.lastPickId && guard < 10) {
+        pick = pool[Math.floor(Math.random() * pool.length)]
+        guard += 1
+      }
+    }
+    state.current = pick
+    state.lastPickId = pick.id
+    state.showBack = false
+    renderCard()
+  }
+
+  const rate = level => {
+    if (!state.current) return
+    const c = state.current
+    const stats = loadStats()
+    c.reps += 1
+    c.updatedAt = nowTs()
+
+    if (level === "again") {
+      c.lapses += 1
+      c.ease = clamp(c.ease - 0.20, 1.3, 2.8)
+      c.intervalDays = 0
+      c.dueAt = nowTs() + 2 * 60 * 1000
+    }
+    if (level === "hard") {
+      c.ease = clamp(c.ease - 0.10, 1.3, 2.8)
+      const base = c.intervalDays <= 0 ? 0.25 : c.intervalDays
+      c.intervalDays = clamp(base * 1.2, 0.15, 365)
+      c.dueAt = nowTs() + c.intervalDays * 86400000
+    }
+    if (level === "good") {
+      const base = c.intervalDays <= 0 ? 0.5 : c.intervalDays
+      c.intervalDays = clamp(base * c.ease, 0.25, 365)
+      c.dueAt = nowTs() + c.intervalDays * 86400000
+    }
+    if (level === "easy") {
+      c.ease = clamp(c.ease + 0.10, 1.3, 2.8)
+      const base = c.intervalDays <= 0 ? 1 : c.intervalDays
+      c.intervalDays = clamp(base * (c.ease + 0.25), 0.5, 365)
+      c.dueAt = nowTs() + c.intervalDays * 86400000
+    }
+
+    saveDeck()
+    stats.reviews += 1
+    saveStats(stats)
+    pickNext()
+  }
+
+  const parseCSVLine = line => {
+    const out = []
+    let cur = ""
+    let inQuotes = false
+    for (let i = 0; i < line.length; i += 1) {
+      const ch = line[i]
+      if (ch === '"') {
+        const next = line[i + 1]
+        if (inQuotes && next === '"') { cur += '"'; i += 1 }
+        else { inQuotes = !inQuotes }
+      } else if (ch === "," && !inQuotes) {
+        out.push(cur); cur = ""
+      } else cur += ch
+    }
+    out.push(cur)
+    return out.map(s => s.trim())
+  }
+
+  const parseCSV = text => {
+    const lines = text.replace(/\r/g,"").split("\n").filter(l => l.trim().length)
+    if (!lines.length) return []
+    const header = parseCSVLine(lines[0]).map(h => h.toLowerCase())
+    const idx = name => header.indexOf(name)
+    const iFront = idx("front")
+    const iBack = idx("back")
+    const iExample = idx("example")
+    const iNotes = idx("notes")
+    if (iFront < 0 || iBack < 0) throw new Error("Missing headers. Required: front,back")
+    const cards = []
+    for (let i = 1; i < lines.length; i += 1) {
+      const cols = parseCSVLine(lines[i])
+      const c = {
+        front: cols[iFront] || "",
+        back: cols[iBack] || "",
+        example: iExample >= 0 ? (cols[iExample] || "") : "",
+        notes: iNotes >= 0 ? (cols[iNotes] || "") : ""
+      }
+      if (c.front.trim() || c.back.trim()) cards.push(c)
+    }
+    return cards
+  }
+
+  const parseXML = text => {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(text, "application/xml")
+    const err = doc.querySelector("parsererror")
+    if (err) throw new Error("XML parse error")
+    const nodes = Array.from(doc.querySelectorAll("card"))
+    return nodes.map(n => ({
+      front: (n.querySelector("front")?.textContent || "").trim(),
+      back: (n.querySelector("back")?.textContent || "").trim(),
+      example: (n.querySelector("example")?.textContent || "").trim(),
+      notes: (n.querySelector("notes")?.textContent || "").trim()
+    })).filter(c => c.front || c.back)
+  }
+
+  const mergeCards = newCards => {
+    const normalized = newCards.map(normalizeCard)
+    const existing = new Map(state.deck.map(c => [`${c.front}||${c.back}`, true]))
+    let added = 0
+    for (const c of normalized) {
+      const key = `${c.front}||${c.back}`
+      if (existing.has(key)) continue
+      state.deck.push(c)
+      existing.set(key, true)
+      added += 1
+    }
+    saveDeck()
+    ui.status.textContent = `Imported. Added ${added}. Total ${state.deck.length}.`
+    pickNext()
+  }
+
+  const speakFR = text => {
+    ui.audioWarn.style.display = "none"
+    ui.audioOk.style.display = "none"
+    if (!("speechSynthesis" in window)) {
+      ui.audioWarn.textContent = "Speech engine not found in this browser."
+      ui.audioWarn.style.display = "block"
+      return
+    }
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = "fr-FR"
+    u.rate = 0.95
+    const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : []
+    const fr = voices.find(v => (v.lang || "").toLowerCase().startsWith("fr"))
+    if (fr) u.voice = fr
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(u)
+    ui.audioOk.textContent = fr ? `French voice: ${fr.name}` : "French voice: default"
+    ui.audioOk.style.display = "block"
+  }
+
+  const exportCSV = () => {
+    const esc = s => {
+      const t = (s || "").replace(/"/g,'""')
+      return /[,"\n]/.test(t) ? `"${t}"` : t
+    }
+    const rows = ["front,back,example,notes"]
+    for (const c of state.deck) {
+      rows.push([esc(c.front), esc(c.back), esc(c.example), esc(c.notes)].join(","))
+    }
+    const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "french_flashcards.csv"
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  const importText = (text, hintName="") => {
+    try {
+      const name = (hintName || "").toLowerCase()
+      const cards = name.endsWith(".xml") ? parseXML(text) : parseCSV(text)
+      mergeCards(cards)
+    } catch (e) {
+      ui.status.textContent = `Import error: ${e.message || e}`
+    }
+  }
+
+  byId("importBtn").addEventListener("click", async () => {
+    const f = ui.fileInput.files && ui.fileInput.files[0]
+    if (!f) {
+      ui.status.textContent = "No file selected. If iPhone blocks file upload, use paste import."
+      return
+    }
+    const text = await f.text()
+    importText(text, f.name)
+  })
+
+  byId("pasteLoadBtn").addEventListener("click", () => {
+    const text = ui.pasteBox.value || ""
+    if (!text.trim()) { ui.status.textContent = "Paste CSV content first."; return }
+    importText(text, "pasted.csv")
+  })
+
+  byId("pasteClearBtn").addEventListener("click", () => { ui.pasteBox.value = ""; ui.status.textContent = "" })
+
+  ui.card.addEventListener("click", () => {
+    if (!state.current) return
+    state.showBack = !state.showBack
+    renderCard()
+  })
+
+  byId("nextBtn").addEventListener("click", () => pickNext())
+  byId("speakBtn").addEventListener("click", () => {
+    if (!state.current) return
+    const t = state.showBack ? (state.current.example || state.current.front) : state.current.front
+    if (t.trim()) speakFR(t)
+  })
+
+  byId("againBtn").addEventListener("click", () => rate("again"))
+  byId("hardBtn").addEventListener("click", () => rate("hard"))
+  byId("goodBtn").addEventListener("click", () => rate("good"))
+  byId("easyBtn").addEventListener("click", () => rate("easy"))
+
+  byId("exportBtn").addEventListener("click", () => exportCSV())
+  byId("resetBtn").addEventListener("click", () => {
+    localStorage.removeItem(storageKey)
+    localStorage.removeItem(storageStatsKey)
+    state.deck = []
+    state.current = null
+    state.showBack = false
+    ui.status.textContent = "Reset done."
+    renderCard()
+  })
+
+  const setupDrop = () => {
+    const dz = ui.dropZone
+    const stop = e => { e.preventDefault(); e.stopPropagation() }
+
+    ;["dragenter","dragover"].forEach(ev => dz.addEventListener(ev, e => { stop(e); dz.classList.add("active") }))
+    ;["dragleave","drop"].forEach(ev => dz.addEventListener(ev, e => { stop(e); dz.classList.remove("active") }))
+
+    dz.addEventListener("drop", async e => {
+      stop(e)
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]
+      if (!f) return
+      const text = await f.text()
+      importText(text, f.name)
+    })
+  }
+
+  const initAudioProbe = () => {
+    if (!("speechSynthesis" in window)) {
+      ui.audioWarn.textContent = "Speech engine not found in this browser."
+      ui.audioWarn.style.display = "block"
+      return
+    }
+    const refresh = () => {
+      const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : []
+      if (!voices.length) return
+      const fr = voices.find(v => (v.lang || "").toLowerCase().startsWith("fr"))
+      if (!fr) {
+        ui.audioWarn.textContent = "No French voice found. Add a French voice in device settings."
+        ui.audioWarn.style.display = "block"
+      } else {
+        ui.audioOk.textContent = `French voice found: ${fr.name}`
+        ui.audioOk.style.display = "block"
+      }
+    }
+    refresh()
+    if (window.speechSynthesis.onvoiceschanged !== undefined) window.speechSynthesis.onvoiceschanged = refresh
+  }
+
+  state.deck = loadDeck()
+  setupDrop()
+  pickNext()
+  initAudioProbe()
 </script>
 </body>
 </html>
